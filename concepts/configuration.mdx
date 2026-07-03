@@ -1,34 +1,27 @@
 ---
-title: "Configure Hiszpan Scripts for Your Project"
+title: "Configuring Hiszpan Scripts with hiszpan.config.json"
 sidebarTitle: "Configuration"
-description: "The hiszpan.config.json file controls script discovery, default options, environment variables, and output behavior for your project."
+description: "Use hiszpan.config.json to configure script discovery, shell selection, environment variable injection, and per-run lifecycle hooks."
 ---
 
 The `hiszpan.config.json` file is the single source of truth for how Hiszpan Scripts behaves in your project. Place it at your project root and commit it to version control so that every contributor and CI environment runs scripts with the same settings. You don't need a config file to get started — Hiszpan Scripts falls back to sensible defaults — but defining one gives you full control over discovery, environment injection, lifecycle hooks, and output.
 
 ## Example configuration
 
+The example below shows a complete `hiszpan.config.json` with every supported field. All fields are optional — omit any field to use its default value instead.
+
 ```json
 {
-  // Directory where your scripts live (relative to this config file)
   "scriptsDir": "./scripts",
-
-  // Shell used to execute shell scripts
   "defaultShell": "bash",
-
-  // Environment variables injected into every script run
   "env": {
     "NODE_ENV": "production",
     "API_BASE_URL": "https://api.example.com"
   },
-
-  // Lifecycle hooks that wrap every script execution
   "hooks": {
     "before": "scripts/hooks/before.sh",
     "after": "scripts/hooks/after.sh"
   },
-
-  // Stream extra diagnostic output to the terminal
   "verbose": false
 }
 ```
@@ -76,6 +69,8 @@ You can override select configuration values at runtime using environment variab
 | Environment variable | Overrides config field | Example |
 |---|---|---|
 | `HISZPAN_SCRIPTS_DIR` | `scriptsDir` | `HISZPAN_SCRIPTS_DIR=./ops/scripts script run deploy` |
+| `HISZPAN_SHELL` | `defaultShell` | `HISZPAN_SHELL=zsh script run build` |
+| `HISZPAN_CONFIG` | config file path | `HISZPAN_CONFIG=/etc/hiszpan.config.json script run deploy` |
 | `HISZPAN_VERBOSE` | `verbose` | `HISZPAN_VERBOSE=true script run build` |
 
 Environment variable overrides take the highest precedence — they win over both `hiszpan.config.json` values and built-in defaults.
@@ -85,5 +80,5 @@ Environment variable overrides take the highest precedence — they win over bot
 </Tip>
 
 <Tip>
-  Run `script config` at any time to print the fully resolved configuration for your current directory, including all environment variable overrides applied. This is the fastest way to confirm what Hiszpan Scripts will actually use when you execute a script.
+  Run `script config get` at any time to print the fully resolved configuration for your current directory, including all environment variable overrides applied. This is the fastest way to confirm what Hiszpan Scripts will actually use when you execute a script.
 </Tip>

@@ -1,7 +1,7 @@
 ---
-title: "Hiszpan Scripts: Automation Tools for Developers"
+title: "Hiszpan Scripts: Automation CLI Tools for Developers"
 sidebarTitle: "Home"
-description: "Hiszpan Scripts is a collection of ready-to-use scripts and CLI tools that automate repetitive development and workflow tasks."
+description: "Hiszpan Scripts is a CLI toolkit of ready-to-use automation scripts that help developers eliminate repetitive tasks and ship projects faster."
 ---
 
 Hiszpan Scripts gives you a growing library of battle-tested automation scripts and a lightweight CLI so you can stop repeating yourself and start shipping faster. Whether you're setting up new projects, managing deployments, or wiring together multi-step workflows, Hiszpan Scripts handles the busywork — so you can focus on the code that actually matters.
@@ -37,14 +37,21 @@ Hiszpan Scripts gives you a growing library of battle-tested automation scripts 
     Run the `init` command inside your project directory to generate a configuration file:
 
     ```bash
-    hiszpan init
+    script init
+    ```
+  </Step>
+  <Step title="List available scripts">
+    See every script that's ready to run in your workspace:
+
+    ```bash
+    script list
     ```
   </Step>
   <Step title="Run your first script">
     Pick a script from the library and execute it with the `run` command:
 
     ```bash
-    hiszpan run hello-world
+    script run hello-world
     ```
   </Step>
 </Steps>

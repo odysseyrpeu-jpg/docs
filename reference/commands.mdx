@@ -82,13 +82,21 @@ $ script list --json
 
 Runs the named script discovered in your project. Replace `<name>` with the script identifier shown by `script list`. The script executes in the shell defined by your config (or `HISZPAN_SHELL`).
 
-<ParamField body="--dry-run" type="flag">
+To pass arguments directly to the script (rather than to the CLI itself), use a `--` separator followed by your arguments. Everything after `--` is forwarded as-is to the script process.
+
+<ParamField body="-- <args>" type="string">
+  Separates CLI flags from arguments forwarded to the script. Any values after
+  `--` are passed directly to the script process and are not interpreted by the
+  Hiszpan Scripts CLI.
+</ParamField>
+
+<ParamField body="--dry-run" type="boolean">
   Previews the command that would be executed without actually running it.
   Useful for verifying flag interpolation and environment variable injection
   before committing to a run.
 </ParamField>
 
-<ParamField body="--env KEY=VALUE" type="flag">
+<ParamField body="--env KEY=VALUE" type="string">
   Injects an environment variable into the script's runtime. You can pass this
   flag multiple times to supply several variables.
 </ParamField>
@@ -104,6 +112,12 @@ $ script run build
 
 ▶ Running build...
 ✔ Build completed in 4.2s
+
+# Pass extra arguments to the script itself (after the -- separator)
+$ script run build -- --watch --sourcemaps
+
+▶ Running build --watch --sourcemaps...
+✔ Build completed in 4.8s
 
 # Preview the command without executing it
 $ script run deploy --dry-run

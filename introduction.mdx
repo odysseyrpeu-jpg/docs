@@ -1,35 +1,51 @@
 ---
-title: "Hiszpan Scripts: Automation Tools for Developers"
+title: "What Hiszpan Scripts Is and Why Your Team Should Use It"
 sidebarTitle: "Introduction"
-description: "Hiszpan Scripts gives you a library of battle-tested scripts and a simple CLI to automate repetitive development and workflow tasks in minutes."
+description: "Learn what Hiszpan Scripts is, who it's built for, and how its composable CLI approach helps development teams eliminate repetitive workflow tasks."
 ---
 
-Hiszpan Scripts is a collection of ready-to-use scripts and a simple command-line interface designed to eliminate the repetitive work that slows developers down. Whether you're bootstrapping a new project, automating a CI step, or stitching together a multi-stage workflow, Hiszpan Scripts gives you a consistent, composable toolkit you can drop into any codebase and use immediately. It's built for individual developers and teams alike — no complex setup, no vendor lock-in, just scripts that work.
+Hiszpan Scripts is a collection of ready-to-use scripts and a lightweight command-line interface designed to eliminate the repetitive work that slows developers down. Rather than rewriting the same build, lint, test, and deployment steps across every project, you get a consistent, composable toolkit you can drop into any codebase and use immediately — no complex setup, no vendor lock-in.
 
-## What you can do
+## Who it's for
+
+Hiszpan Scripts is built for any developer or team that manages recurring workflow tasks from the command line. It's a good fit if you:
+
+- find yourself copying the same shell scripts between projects,
+- want a single, uniform interface for tasks that currently live in scattered `package.json` scripts or Makefiles,
+- need to onboard new contributors quickly with a predictable, self-documenting set of commands, or
+- want to automate multi-step workflows from a CI pipeline, cron job, or local terminal without a heavyweight orchestration tool.
+
+## What sets it apart
 
 <CardGroup cols={2}>
-  <Card title="Run scripts instantly" icon="play">
-    Execute any script from the library with a single CLI command — no boilerplate, no configuration required to get started.
+  <Card title="Zero-config defaults" icon="bolt" href="/concepts/configuration">
+    Every built-in script ships with sensible defaults so you can run it immediately without touching a config file.
   </Card>
-  <Card title="Configure behavior" icon="sliders">
-    Tailor every script to your environment using a simple `hiszpan.config.js` file that lives alongside your project code.
+  <Card title="Composable workflows" icon="arrows-spin" href="/guides/automation">
+    Chain scripts into named pipelines and trigger the whole sequence with a single `script run` command.
   </Card>
-  <Card title="Automate workflows" icon="arrows-spin">
-    Chain multiple scripts together into named workflows and trigger them from the CLI, a CI pipeline, or a cron job.
+  <Card title="Cross-platform support" icon="globe" href="/quickstart">
+    Hiszpan Scripts runs on macOS, Linux, and Windows without platform-specific workarounds or shell assumptions.
   </Card>
-  <Card title="Extend with custom scripts" icon="puzzle-piece">
-    Write your own scripts using the Hiszpan Scripts API and share them across projects or publish them for the community.
+  <Card title="Extensible by design" icon="puzzle-piece" href="/guides/first-script">
+    Write your own scripts alongside the built-ins and manage them all through the same CLI and config file.
   </Card>
 </CardGroup>
 
+## Core concepts at a glance
+
+Understanding three ideas covers most of what you'll need day-to-day:
+
+- **Scripts** — named units of work, either built-in or custom, that you invoke with `script run <name>`.
+- **Configuration** — a `hiszpan.config.json` file in your project root that controls script behavior, environment options, and default values.
+- **Environment variables** — a set of `HISZPAN_*` variables (`HISZPAN_SCRIPTS_DIR`, `HISZPAN_VERBOSE`, `HISZPAN_CONFIG`, `HISZPAN_SHELL`) that let you override settings without editing the config file, which is useful in CI environments.
+
 ## Key features
 
-- **Zero-config defaults** — every script ships with sensible defaults so you can run it immediately without touching a config file.
-- **Composable workflows** — combine scripts into reusable, named pipelines that you can invoke with a single command.
-- **Cross-platform support** — Hiszpan Scripts runs on macOS, Linux, and Windows without platform-specific workarounds.
-- **First-class TypeScript support** — write custom scripts in TypeScript with full type definitions included out of the box.
-- **Minimal dependencies** — the core CLI has a small, audited dependency footprint to keep your project lean and secure.
+- **Minimal footprint** — the core CLI has a small, audited dependency tree to keep your project lean and your supply chain manageable.
+- **First-class TypeScript support** — full type definitions ship with the package so custom scripts get autocomplete and type-checking out of the box.
+- **Consistent output** — every script uses the same structured output format, making logs easy to parse in automated pipelines.
+- **Global flags everywhere** — `--help`, `--version`, `--verbose`, and `--config <path>` work on every command, not just a subset.
 
 ## Next steps
 
@@ -37,8 +53,8 @@ Hiszpan Scripts is a collection of ready-to-use scripts and a simple command-lin
   <Card title="Quickstart" icon="rocket" href="/quickstart">
     Install the CLI and run your first script in under five minutes.
   </Card>
-  <Card title="Core Concepts" icon="book-open" href="/concepts/overview">
-    Learn how scripts, configuration, and workflows fit together.
+  <Card title="Installation" icon="box" href="/installation">
+    Explore system requirements, global vs. local installs, and how to update or remove the package.
   </Card>
 </CardGroup>
 

@@ -53,6 +53,10 @@ deploy:
 
 Using `set -euo pipefail` in your parent shell script ensures the pipeline aborts immediately if any step returns a non-zero exit code, preventing later steps from running against a broken state.
 
+<Warning>
+  Makefile recipe lines — the commands indented beneath each target — **must use a real tab character**, not spaces. If your editor converts tabs to spaces, the `make` command will fail with a `missing separator` error. Check your editor settings and ensure tab characters are preserved when saving `Makefile`.
+</Warning>
+
 ## Using in npm scripts
 
 If your project uses Node.js, you can call `script run` directly from the `scripts` block in `package.json`. This lets your team run automation through the familiar `npm run` interface without needing to remember Hiszpan Scripts command syntax.
@@ -133,7 +137,7 @@ crontab -e
 
 Add an entry using the standard cron syntax. The example below runs the `sync-data` script every day at 02:30 AM server time:
 
-```
+```text
 # ┌──────────── minute (0–59)
 # │  ┌─────────── hour (0–23)
 # │  │  ┌──────────── day of month (1–31)

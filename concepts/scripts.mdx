@@ -1,7 +1,7 @@
 ---
-title: "Understanding Scripts in Hiszpan Scripts"
+title: "Scripts in Hiszpan Scripts: Shell and JavaScript Guide"
 sidebarTitle: "Scripts"
-description: "Scripts are the building blocks of Hiszpan Scripts. Learn how to structure, name, and parameterize your scripts for maximum reusability."
+description: "Learn how to write, organize, and parameterize shell and JavaScript scripts so Hiszpan Scripts can discover and execute them reliably."
 ---
 
 In Hiszpan Scripts, a **script** is any executable file that lives in your scripts directory and performs a discrete, repeatable task. Scripts can be written as shell scripts (`.sh`) or JavaScript files (`.js`) — you choose whichever fits the task. Hiszpan Scripts handles discovery, environment injection, and lifecycle hooks around your script so that you can focus on writing the logic rather than the plumbing.
@@ -21,17 +21,25 @@ npm run compile
 echo "Build complete."
 ```
 
-**JavaScript script — `scripts/seed-db.js`**
+**JavaScript script — `scripts/generate-report.js`**
 
 ```javascript
 #!/usr/bin/env node
+const fs = require('fs');
+const path = require('path');
 
 async function main() {
-  const db = await connectToDatabase(process.env.DATABASE_URL);
+  const outputDir = process.env.OUTPUT_DIR || './reports';
+  fs.mkdirSync(outputDir, { recursive: true });
 
-  console.log("Seeding database...");
-  await db.seed();
-  console.log("Done.");
+  const report = {
+    generatedAt: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+  };
+
+  const outFile = path.join(outputDir, 'report.json');
+  fs.writeFileSync(outFile, JSON.stringify(report, null, 2));
+  console.log(`Report written to ${outFile}`);
 }
 
 main().catch((err) => {
@@ -62,9 +70,9 @@ set -euo pipefail
 
 ```javascript
 #!/usr/bin/env node
-// @name        seed-db
-// @description Populate the database with initial fixture data.
-// @author      backend-team
+// @name        generate-report
+// @description Generate a JSON summary report and write it to the output directory.
+// @author      platform-team
 
 async function main() {
   // ... rest of script

@@ -4,7 +4,7 @@ sidebarTitle: "FAQ"
 description: "Answers to common questions about installing, configuring, and running Hiszpan Scripts, including troubleshooting tips for frequent issues."
 ---
 
-Got a question about Hiszpan Scripts? You're in the right place. This FAQ covers the most common questions we hear from developers — from installation and configuration to debugging tricky CI failures. If you don't find what you're looking for here, head over to the [GitHub Discussions](https://github.com/hiszpan-scripts/hiszpan-scripts/discussions) page or open an issue.
+Got a question about Hiszpan Scripts? You're in the right place. This FAQ covers the most common questions we hear from developers — from installation and configuration to debugging tricky CI failures. If you don't find what you're looking for here, head over to the [GitHub Discussions](https://github.com/odysseyrpeu-jpg/Hiszpan-Scripts/discussions) page or open an issue.
 
 ---
 
@@ -44,18 +44,18 @@ Got a question about Hiszpan Scripts? You're in the right place. This FAQ covers
   <Accordion title="Can I use JavaScript/TypeScript scripts instead of shell scripts?">
     Yes — Hiszpan Scripts supports JavaScript and TypeScript entrypoints in
     addition to shell scripts. Point `scriptsDir` at a directory containing
-    `.js` or `.ts` files and set your `shell` config to `node` (or `ts-node`
+    `.js` or `.ts` files and set your `defaultShell` config to `node` (or `ts-node`
     for TypeScript):
 
     ```json
     {
       "scriptsDir": "scripts",
-      "shell": "node"
+      "defaultShell": "node"
     }
     ```
 
     For TypeScript, make sure `ts-node` is available in your project or
-    globally, and set `"shell": "ts-node"`. Each script file should export a
+    globally, and set `"defaultShell": "ts-node"`. Each script file should export a
     default async function or contain executable top-level code.
   </Accordion>
 
@@ -109,7 +109,7 @@ Got a question about Hiszpan Scripts? You're in the right place. This FAQ covers
     ```
 
     Native parallel execution is on the roadmap — watch the
-    [changelog](https://github.com/hiszpan-scripts/hiszpan-scripts/releases)
+    [changelog](https://github.com/odysseyrpeu-jpg/Hiszpan-Scripts/releases)
     for updates. In the meantime, both approaches above give you parallel output
     with exit-code aggregation.
   </Accordion>
@@ -141,10 +141,10 @@ Got a question about Hiszpan Scripts? You're in the right place. This FAQ covers
   <Accordion title="Where can I get help or report a bug?">
     For usage questions, start with `script --help` or browse these docs. If
     you've found a bug or want to request a feature, open an issue on the
-    [GitHub repository](https://github.com/hiszpan-scripts/hiszpan-scripts/issues)
+    [GitHub repository](https://github.com/odysseyrpeu-jpg/Hiszpan-Scripts/issues)
     — please include your `script --version` output, your OS and shell, and the
     full command you ran. For community discussion and Q&A, join the
-    [GitHub Discussions](https://github.com/hiszpan-scripts/hiszpan-scripts/discussions)
+    [GitHub Discussions](https://github.com/odysseyrpeu-jpg/Hiszpan-Scripts/discussions)
     board where maintainers and other users can help.
   </Accordion>
 </AccordionGroup>

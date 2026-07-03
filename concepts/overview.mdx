@@ -1,7 +1,7 @@
 ---
-title: "How Hiszpan Scripts Works: Core Architecture"
+title: "Hiszpan Scripts: Core Architecture and Mental Model"
 sidebarTitle: "Overview"
-description: "Learn how Hiszpan Scripts organizes scripts, configuration, and the CLI to give you a consistent, repeatable automation workflow."
+description: "Learn how Hiszpan Scripts organizes scripts, config, and the CLI into one consistent, repeatable automation workflow for your team."
 ---
 
 Hiszpan Scripts is built around a simple mental model: you write **scripts** that do the work, a **config file** that describes how those scripts should behave, and a **CLI** that ties everything together. Whether you're automating a one-off task or orchestrating a multi-step deployment pipeline, every interaction follows the same predictable pattern — making your workflows easier to share, version, and repeat across teams and environments.
@@ -42,7 +42,7 @@ This two-step lookup means you can keep most scripts co-located in a single fold
     Using the resolved `scriptsDir` and any explicit path references in config, the CLI finds the file that corresponds to the script name you requested. If no match is found, it exits with a clear error message.
   </Step>
   <Step title="Script runs with options applied">
-    Any configured `env` variables are injected into the process environment, `before` hooks execute first, then your script runs with any arguments you passed, and finally `after` hooks execute. Output is streamed to your terminal (or captured, if you use `--quiet`).
+    Any configured `env` variables are injected into the process environment, `before` hooks execute first, then your script runs with any arguments you passed, and finally `after` hooks execute. Output is streamed to your terminal in real time — pass `--verbose` to see additional diagnostic information such as resolved paths and hook invocations.
   </Step>
 </Steps>
 
@@ -52,12 +52,12 @@ A typical Hiszpan Scripts project looks like this:
 
 ```
 my-project/
-├── hiszpan.config.json       # Project-level configuration
+├── hiszpan.config.json         # Project-level configuration
 ├── scripts/
-│   ├── build.sh              # Shell script: build the project
-│   ├── deploy.sh             # Shell script: deploy to production
-│   ├── seed-db.js            # JavaScript script: seed the database
-│   └── cleanup.sh            # Shell script: remove build artifacts
+│   ├── build.sh                # Shell script: build the project
+│   ├── deploy.sh               # Shell script: deploy to production
+│   ├── generate-report.js      # JavaScript script: generate a report
+│   └── cleanup.sh              # Shell script: remove build artifacts
 ├── src/
 │   └── ...
 ├── package.json
