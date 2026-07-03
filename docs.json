@@ -1,52 +1,23 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "luma",
+  "theme": "mint",
   "name": "Hiszpan Scripts",
   "colors": {
-    "primary": "#54545c"
+    "primary": "#fcba03",
+    "light": "#fcba03",
+    "dark": "#fcba03"
   },
   "favicon": "/favicon.svg",
   "logo": {
-    "light": "https://media.brand.dev/99d23bb0-7527-48e5-b2c1-71011df3a4d8.svg",
-    "dark": "https://media.brand.dev/99d23bb0-7527-48e5-b2c1-71011df3a4d8.svg"
+    "light": "https://mintlify.s3-us-west-1.amazonaws.com/mintlify/logo-light.png",
+    "dark": "https://mintlify.s3-us-west-1.amazonaws.com/mintlify/logo-dark.png"
   },
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "Documentation",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "introduction",
-              "quickstart",
-              "installation"
-            ]
-          },
-          {
-            "group": "Core Concepts",
-            "pages": [
-              "concepts/overview",
-              "concepts/configuration",
-              "concepts/scripts"
-            ]
-          },
-          {
-            "group": "Guides",
-            "pages": [
-              "guides/first-script",
-              "guides/customization",
-              "guides/automation"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              "reference/commands",
-              "reference/options",
-              "reference/faq"
-            ]
-          }
+        "group": "Getting Started",
+        "pages": [
+          "About US/Introduction"
         ]
       }
     ]
