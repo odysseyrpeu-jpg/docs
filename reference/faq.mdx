@@ -1,0 +1,150 @@
+---
+title: "Frequently Asked Questions about Hiszpan Scripts"
+sidebarTitle: "FAQ"
+description: "Answers to common questions about installing, configuring, and running Hiszpan Scripts, including troubleshooting tips for frequent issues."
+---
+
+Got a question about Hiszpan Scripts? You're in the right place. This FAQ covers the most common questions we hear from developers — from installation and configuration to debugging tricky CI failures. If you don't find what you're looking for here, head over to the [GitHub Discussions](https://github.com/hiszpan-scripts/hiszpan-scripts/discussions) page or open an issue.
+
+---
+
+<AccordionGroup>
+  <Accordion title="How do I update Hiszpan Scripts to the latest version?">
+    Run the same install command you used originally — the package manager will
+    resolve and install the latest release automatically. For example, if you
+    installed globally via npm:
+
+    ```bash
+    npm install -g hiszpan-scripts@latest
+    ```
+
+    After updating, run `script --version` to confirm the new version is active.
+    If you pin a specific version in your project's `package.json`, update the
+    version constraint there and run your usual install step (`npm install` /
+    `yarn` / `pnpm install`).
+  </Accordion>
+
+  <Accordion title="My script isn't found — what should I check?">
+    First, run `script list` to see which scripts Hiszpan Scripts has actually
+    discovered. If your script is missing, the most common cause is a mismatch
+    between the script's file location and the `scriptsDir` value in
+    `hiszpan.config.json`. Check that the file exists in the expected directory
+    and that its name matches what you're passing to `script run`:
+
+    ```bash
+    script config get scriptsDir   # confirm the configured directory
+    script list                    # confirm the script appears in the list
+    ```
+
+    Also make sure the script file has execute permissions (`chmod +x
+    scripts/myscript.sh`) and that its extension matches the shell configured
+    for your project.
+  </Accordion>
+
+  <Accordion title="Can I use JavaScript/TypeScript scripts instead of shell scripts?">
+    Yes — Hiszpan Scripts supports JavaScript and TypeScript entrypoints in
+    addition to shell scripts. Point `scriptsDir` at a directory containing
+    `.js` or `.ts` files and set your `shell` config to `node` (or `ts-node`
+    for TypeScript):
+
+    ```json
+    {
+      "scriptsDir": "scripts",
+      "shell": "node"
+    }
+    ```
+
+    For TypeScript, make sure `ts-node` is available in your project or
+    globally, and set `"shell": "ts-node"`. Each script file should export a
+    default async function or contain executable top-level code.
+  </Accordion>
+
+  <Accordion title="How do I pass secret environment variables without storing them in config?">
+    Never put secrets directly in `hiszpan.config.json` — use the `--env` flag
+    at runtime instead, or load them from your environment before invoking the
+    CLI:
+
+    ```bash
+    # Inject a secret inline (avoid this in shared shell history)
+    script run deploy --env API_TOKEN=$API_TOKEN
+
+    # Better: export from a .env loader like dotenvx or direnv
+    dotenvx run -- script run deploy
+    ```
+
+    In CI, set the secret as a masked environment variable in your pipeline
+    settings (e.g. GitHub Actions secrets, GitLab CI variables). Hiszpan
+    Scripts will pick it up automatically from the process environment without
+    you needing to reference it explicitly.
+  </Accordion>
+
+  <Accordion title="Script runs locally but fails in CI — what could be wrong?">
+    This is almost always an environment difference between your local machine
+    and the CI runner. Start by enabling verbose output to capture the full
+    execution context:
+
+    ```bash
+    HISZPAN_VERBOSE=1 script run <name>
+    ```
+
+    Common culprits include missing `PATH` entries (tools installed locally but
+    not in the CI image), different default shells (`/bin/sh` vs `/bin/bash`),
+    hardcoded absolute paths that only exist on your machine, and environment
+    variables that you've set in your shell profile but not in CI. Set
+    `HISZPAN_SHELL` explicitly in your CI config and audit any paths your script
+    assumes are present.
+  </Accordion>
+
+  <Accordion title="Can I run multiple scripts in parallel?">
+    Hiszpan Scripts doesn't have built-in parallel execution yet, but you can
+    achieve it with standard shell job control or a tool like
+    [`concurrently`](https://github.com/open-cli-tools/concurrently):
+
+    ```bash
+    # Shell background jobs
+    script run lint & script run test & wait
+
+    # Using concurrently
+    concurrently "script run lint" "script run test"
+    ```
+
+    Native parallel execution is on the roadmap — watch the
+    [changelog](https://github.com/hiszpan-scripts/hiszpan-scripts/releases)
+    for updates. In the meantime, both approaches above give you parallel output
+    with exit-code aggregation.
+  </Accordion>
+
+  <Accordion title="How do I debug a failing script?">
+    Start with `--dry-run` to verify the command that would be executed, then
+    add `--verbose` to get a full trace of the shell invocation and environment:
+
+    ```bash
+    script run <name> --dry-run
+    script run <name> --verbose
+    ```
+
+    If the script still behaves unexpectedly, add shell-level debug tracing
+    inside the script itself. For Bash scripts, add `set -x` at the top to
+    print every command before it runs:
+
+    ```bash
+    #!/bin/bash
+    set -x   # enable trace mode
+    # ... rest of your script
+    ```
+
+    Check the exit code with `echo $?` after running, and cross-reference it
+    against the [exit code reference](/reference/options#exit-codes) to narrow
+    down the failure category.
+  </Accordion>
+
+  <Accordion title="Where can I get help or report a bug?">
+    For usage questions, start with `script --help` or browse these docs. If
+    you've found a bug or want to request a feature, open an issue on the
+    [GitHub repository](https://github.com/hiszpan-scripts/hiszpan-scripts/issues)
+    — please include your `script --version` output, your OS and shell, and the
+    full command you ran. For community discussion and Q&A, join the
+    [GitHub Discussions](https://github.com/hiszpan-scripts/hiszpan-scripts/discussions)
+    board where maintainers and other users can help.
+  </Accordion>
+</AccordionGroup>

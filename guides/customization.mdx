@@ -1,0 +1,126 @@
+---
+title: "Customize Script Behavior with Configuration"
+sidebarTitle: "Customization"
+description: "Override defaults, inject environment variables, and set up before/after hooks to tailor Hiszpan Scripts to your project's needs."
+---
+
+Hiszpan Scripts exposes a set of configuration options in `hiszpan.config.json` that let you adapt the CLI to your project's structure and conventions. You can point the CLI at a different scripts directory, inject environment variables that every script can read, run hook scripts automatically before or after each execution, and enable verbose logging when you need to debug a workflow.
+
+## Changing the scripts directory
+
+By default, Hiszpan Scripts looks for scripts in a `scripts/` folder at your project root. To use a different location — for example, a monorepo layout where automation lives in `tools/scripts/` — update the `scriptsDir` field:
+
+```json hiszpan.config.json
+{
+  "scriptsDir": "tools/scripts",
+  "defaultShell": "/bin/bash"
+}
+```
+
+After saving the file, run `script list` to confirm the CLI is picking up scripts from the new path.
+
+## Injecting environment variables
+
+Use the `env` field to define key-value pairs that are automatically injected into every script's environment at runtime. This is ideal for sharing project-wide constants such as API base URLs, environment names, or feature flags.
+
+<CodeGroup>
+
+```json hiszpan.config.json
+{
+  "scriptsDir": "scripts",
+  "env": {
+    "APP_ENV": "development",
+    "API_BASE_URL": "https://api.example.com",
+    "RETRY_LIMIT": "3"
+  }
+}
+```
+
+```bash scripts/deploy.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Deploying to ${APP_ENV} environment..."
+echo "Targeting API at ${API_BASE_URL}"
+echo "Max retries: ${RETRY_LIMIT}"
+```
+
+</CodeGroup>
+
+When you run `script run deploy`, the values defined in `env` are present in the script's environment without any extra `export` statements in your shell.
+
+<Warning>
+  Values you set in `env` are stored in plain text inside `hiszpan.config.json`. Do not commit secrets — such as API tokens or passwords — to this file. Instead, read sensitive values from your shell environment or a secrets manager and reference them as shell variables (`$MY_SECRET`) inside your scripts.
+</Warning>
+
+## Before and after hooks
+
+The `hooks` field lets you specify scripts that run automatically before or after every script execution. Use `hooks.before` for setup tasks (e.g., logging, validation) and `hooks.after` for teardown or notification tasks.
+
+<CodeGroup>
+
+```json hiszpan.config.json
+{
+  "scriptsDir": "scripts",
+  "hooks": {
+    "before": "scripts/hooks/before.sh",
+    "after": "scripts/hooks/after.sh"
+  }
+}
+```
+
+```bash scripts/hooks/before.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "[$(date -u +"%Y-%m-%dT%H:%M:%SZ")] Running script: ${HISZPAN_SCRIPT_NAME}" \
+  >> logs/script-runs.log
+```
+
+```bash scripts/hooks/after.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "[$(date -u +"%Y-%m-%dT%H:%M:%SZ")] Finished script: ${HISZPAN_SCRIPT_NAME}" \
+  >> logs/script-runs.log
+```
+
+</CodeGroup>
+
+Hiszpan Scripts exposes the name of the currently executing script in the `HISZPAN_SCRIPT_NAME` environment variable, which you can read from any hook.
+
+<Warning>
+  Hooks run for **every** script invocation, including other utility scripts you may call internally. If a hook itself triggers a `script run` command, you risk creating an infinite loop. Keep hook scripts lightweight and avoid calling the Hiszpan Scripts CLI from within a hook.
+</Warning>
+
+## Verbose output
+
+Set `verbose` to `true` to enable detailed logging from the CLI itself. This is useful when a script behaves unexpectedly and you need to trace exactly what the CLI is doing.
+
+```json hiszpan.config.json
+{
+  "scriptsDir": "scripts",
+  "verbose": true
+}
+```
+
+With verbose mode enabled, the CLI prints additional information to `stdout` for each run, including:
+
+- The resolved path of the script being executed
+- Any environment variables being injected (keys only, not values)
+- The hook scripts being run and their exit codes
+- The final exit code of the script itself
+
+```
+[hiszpan] Resolved script path: /your-project/scripts/greet.sh
+[hiszpan] Injecting env keys: APP_ENV, API_BASE_URL, RETRY_LIMIT
+[hiszpan] Running before hook: scripts/hooks/before.sh
+[hiszpan] Before hook exited with code 0
+[hiszpan] Executing: greet
+Hello, World! Welcome to Hiszpan Scripts.
+[hiszpan] Running after hook: scripts/hooks/after.sh
+[hiszpan] After hook exited with code 0
+[hiszpan] Script exited with code 0
+```
+
+Disable verbose mode in production or CI environments where clean output is preferable by setting `"verbose": false` or omitting the field entirely.

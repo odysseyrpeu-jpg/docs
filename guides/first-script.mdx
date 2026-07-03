@@ -1,0 +1,93 @@
+---
+title: "Write and Run Your First Automation Script"
+sidebarTitle: "First Script"
+description: "Create a custom automation script from scratch and run it with the Hiszpan Scripts CLI in a few simple steps."
+---
+
+In this guide, you'll create a simple greeting script, register it with Hiszpan Scripts, and run it from the command line. By the end, you'll understand the core workflow — write a shell script, drop it in your scripts directory, and let the CLI handle the rest. This pattern scales to any automation task you need to repeat across your project.
+
+<Steps>
+  <Step title="Create a scripts/ directory">
+    Inside your project root, create the directory where Hiszpan Scripts will look for your automation scripts:
+
+    ```bash
+    mkdir scripts
+    ```
+
+    By default, Hiszpan Scripts auto-discovers scripts in the `scripts/` directory relative to your project root. You can change this path later using the `scriptsDir` option in `hiszpan.config.json`.
+  </Step>
+
+  <Step title="Create the script file">
+    Create a new file called `greet.sh` inside the `scripts/` directory:
+
+    ```bash
+    touch scripts/greet.sh
+    chmod +x scripts/greet.sh
+    ```
+
+    Open `scripts/greet.sh` in your editor and add the following:
+
+    ```bash scripts/greet.sh
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    NAME="${1:-World}"
+
+    echo "Hello, ${NAME}! Welcome to Hiszpan Scripts."
+    ```
+
+    The script accepts an optional positional argument for the name to greet. If no argument is provided, it falls back to `"World"`.
+  </Step>
+
+  <Step title="Register your script via auto-discovery">
+    Hiszpan Scripts automatically discovers any executable file placed inside your configured `scriptsDir`. As long as `scripts/greet.sh` exists and is executable, the CLI can find it — no manual registration step is required.
+
+    If you haven't already initialised a config file, run:
+
+    ```bash
+    script init
+    ```
+
+    This generates a `hiszpan.config.json` at your project root with sensible defaults, including `"scriptsDir": "scripts"`.
+  </Step>
+
+  <Step title="Run your script">
+    Execute the `greet` script with the CLI:
+
+    ```bash
+    script run greet
+    ```
+
+    You should see the following output in your terminal:
+
+    ```
+    Hello, World! Welcome to Hiszpan Scripts.
+    ```
+  </Step>
+
+  <Step title="Pass a parameter to your script">
+    Supply a custom name by passing arguments after the `--` separator:
+
+    ```bash
+    script run greet -- --name Alice
+    ```
+
+    Wait — notice that `greet.sh` reads a positional argument (`$1`), not a named flag. Update the invocation to pass the value directly:
+
+    ```bash
+    script run greet -- Alice
+    ```
+
+    Expected output:
+
+    ```
+    Hello, Alice! Welcome to Hiszpan Scripts.
+    ```
+
+    The double dash (`--`) tells the CLI that everything following it should be forwarded as raw arguments to the script itself, rather than being interpreted as CLI flags.
+  </Step>
+</Steps>
+
+<Tip>
+  Run `script list` at any time to see every script that Hiszpan Scripts has discovered in your `scriptsDir`. If `greet` doesn't appear in the list, double-check that the file is executable (`chmod +x scripts/greet.sh`) and that `scriptsDir` in your `hiszpan.config.json` points to the correct directory.
+</Tip>

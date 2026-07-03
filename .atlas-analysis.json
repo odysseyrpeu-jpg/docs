@@ -1,15 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
+  "projectType": "cli-tool",
+  "projectName": "Hiszpan Scripts",
+  "projectDescription": "A collection of scripts and automation tools to streamline common development and workflow tasks.",
   "theme": "luma",
-  "name": "Hiszpan Scripts",
-  "colors": {
-    "primary": "#54545c"
-  },
-  "favicon": "/favicon.svg",
-  "logo": {
-    "light": "https://media.brand.dev/99d23bb0-7527-48e5-b2c1-71011df3a4d8.svg",
-    "dark": "https://media.brand.dev/99d23bb0-7527-48e5-b2c1-71011df3a4d8.svg"
-  },
+  "primaryColor": "#54545c",
+  "lightColor": null,
+  "darkColor": null,
   "navigation": {
     "tabs": [
       {
@@ -51,16 +47,19 @@
       }
     ]
   },
-  "navbar": {
-    "primary": {
-      "type": "button",
-      "label": "Get Started",
-      "href": "/quickstart"
-    }
-  },
-  "footer": {
-    "socials": {
-      "github": "https://github.com/odysseyrpeu-jpg/Hiszpan-Scripts"
-    }
-  }
+  "keyFeatures": [
+    "Ready-to-use script templates for common tasks",
+    "Simple CLI interface for running and managing scripts",
+    "Configurable options to adapt scripts to your workflow",
+    "Modular design — use only what you need",
+    "MIT-licensed and free to customize"
+  ],
+  "publicApiSurface": [
+    "script run <name>",
+    "script list",
+    "script init",
+    "script config",
+    "Configuration file (docs.json or equivalent)",
+    "Environment variable overrides"
+  ]
 }

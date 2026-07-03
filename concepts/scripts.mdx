@@ -1,0 +1,180 @@
+---
+title: "Understanding Scripts in Hiszpan Scripts"
+sidebarTitle: "Scripts"
+description: "Scripts are the building blocks of Hiszpan Scripts. Learn how to structure, name, and parameterize your scripts for maximum reusability."
+---
+
+In Hiszpan Scripts, a **script** is any executable file that lives in your scripts directory and performs a discrete, repeatable task. Scripts can be written as shell scripts (`.sh`) or JavaScript files (`.js`) — you choose whichever fits the task. Hiszpan Scripts handles discovery, environment injection, and lifecycle hooks around your script so that you can focus on writing the logic rather than the plumbing.
+
+## Script format
+
+Scripts follow the conventions of their respective runtime. Here are minimal working examples for each supported type:
+
+**Bash script — `scripts/build.sh`**
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Building project..."
+npm run compile
+echo "Build complete."
+```
+
+**JavaScript script — `scripts/seed-db.js`**
+
+```javascript
+#!/usr/bin/env node
+
+async function main() {
+  const db = await connectToDatabase(process.env.DATABASE_URL);
+
+  console.log("Seeding database...");
+  await db.seed();
+  console.log("Done.");
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
+```
+
+Both formats are first-class citizens. Hiszpan Scripts detects the file extension and routes execution through the correct runtime automatically.
+
+## Script metadata
+
+You can embed optional metadata at the top of any script using a structured comment block. Hiszpan Scripts reads this block when you run `script list`, letting you browse your scripts with human-readable names and descriptions instead of bare filenames.
+
+**Bash metadata block**
+
+```bash
+#!/usr/bin/env bash
+# @name        deploy
+# @description Deploy the application to the target environment.
+# @author      ops-team
+
+set -euo pipefail
+# ... rest of script
+```
+
+**JavaScript metadata block**
+
+```javascript
+#!/usr/bin/env node
+// @name        seed-db
+// @description Populate the database with initial fixture data.
+// @author      backend-team
+
+async function main() {
+  // ... rest of script
+}
+```
+
+The supported metadata fields are:
+
+| Field | Description |
+|---|---|
+| `@name` | A short display name shown in `script list` output |
+| `@description` | A one-line summary of what the script does |
+| `@author` | The team or individual responsible for the script |
+
+All three fields are optional. If you omit the metadata block entirely, `script list` falls back to displaying the filename.
+
+## Passing parameters
+
+You can forward arbitrary arguments to a script by appending `--` after the script name, followed by any flags or positional arguments you want the script to receive:
+
+```bash
+script run deploy -- --env staging --tag v1.4.2
+```
+
+Inside a **bash** script, these arrive as standard positional parameters and flags:
+
+```bash
+#!/usr/bin/env bash
+# Parse flags with getopts or a manual loop
+ENV="production"
+TAG="latest"
+
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --env) ENV="$2"; shift ;;
+    --tag) TAG="$2"; shift ;;
+  esac
+  shift
+done
+
+echo "Deploying tag $TAG to $ENV..."
+```
+
+Inside a **JavaScript** script, they're available on `process.argv` starting at index 2:
+
+```javascript
+#!/usr/bin/env node
+const args = process.argv.slice(2);
+// args = ['--env', 'staging', '--tag', 'v1.4.2']
+
+const envIndex = args.indexOf('--env');
+const env = envIndex !== -1 ? args[envIndex + 1] : 'production';
+
+console.log(`Deploying to ${env}...`);
+```
+
+## Script types
+
+<Tabs>
+  <Tab title="Shell scripts">
+    Shell scripts are ideal for tasks that orchestrate other CLI tools, manipulate files, or chain together Unix commands. Hiszpan Scripts runs them through the shell binary defined by `defaultShell` in your config (default: `bash`).
+
+    ```bash
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Pull latest Docker image and restart the service
+    docker pull "myapp:${TAG:-latest}"
+    docker compose down
+    docker compose up -d
+    echo "Service restarted successfully."
+    ```
+
+    **When to use shell scripts:**
+    - Orchestrating CLI tools (`docker`, `kubectl`, `aws`, etc.)
+    - File system operations and text processing
+    - Quick glue scripts that don't need external libraries
+
+    <Note>
+      Shell scripts must be marked as executable before Hiszpan Scripts can run them. Set the permission with `chmod +x scripts/my-script.sh`. If you're on a team, commit the executable bit so that collaborators don't need to re-apply it after cloning. You can verify the bit is set with `git ls-files --stage scripts/my-script.sh` — the mode should read `100755`.
+    </Note>
+  </Tab>
+  <Tab title="JavaScript scripts">
+    JavaScript scripts run through the Node.js binary available on your `PATH`. They have full access to the Node.js standard library, any packages installed in your project's `node_modules`, and all environment variables injected by Hiszpan Scripts.
+
+    ```javascript
+    #!/usr/bin/env node
+    const fs = require('fs');
+    const path = require('path');
+
+    // Generate a build manifest from compiled output
+    const distDir = path.resolve(__dirname, '../dist');
+    const files = fs.readdirSync(distDir);
+
+    const manifest = {
+      generatedAt: new Date().toISOString(),
+      files: files.map((f) => ({ name: f, size: fs.statSync(path.join(distDir, f)).size })),
+    };
+
+    fs.writeFileSync(
+      path.join(distDir, 'manifest.json'),
+      JSON.stringify(manifest, null, 2)
+    );
+
+    console.log(`Manifest written with ${files.length} entries.`);
+    ```
+
+    **When to use JavaScript scripts:**
+    - Tasks that benefit from npm packages (HTTP requests, templating, parsing)
+    - Complex data transformation or validation logic
+    - Scripts that need to interact with JavaScript-based tooling in your project
+  </Tab>
+</Tabs>

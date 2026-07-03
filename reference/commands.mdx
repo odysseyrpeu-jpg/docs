@@ -1,0 +1,200 @@
+---
+title: "CLI Command Reference for Hiszpan Scripts"
+sidebarTitle: "Commands"
+description: "Complete reference for all Hiszpan Scripts CLI commands: script init, script list, script run, and script config with flags and examples."
+---
+
+The Hiszpan Scripts CLI gives you a unified interface for initializing projects, discovering scripts, running automations, and managing configuration — all from your terminal. Every command supports the `--help` flag, so you can always run `script --help` (or `script <command> --help`) to see usage details and available options inline.
+
+---
+
+### `script init`
+
+Initializes a new Hiszpan Scripts project in the current directory. Running this command creates a `hiszpan.config.json` file with sensible defaults, which you can then customize to fit your project's needs.
+
+<ParamField body="--force" type="flag">
+  Overwrites an existing `hiszpan.config.json` without prompting. Use with
+  caution — your previous configuration will be replaced.
+</ParamField>
+
+```bash
+# Initialize a new project
+$ script init
+
+✔ Created hiszpan.config.json
+✔ Project initialized successfully.
+
+# Overwrite an existing config
+$ script init --force
+
+⚠ Existing config found. Overwriting...
+✔ Created hiszpan.config.json
+✔ Project re-initialized successfully.
+```
+
+---
+
+### `script list`
+
+Lists all scripts discovered in your project based on the `scriptsDir` setting in `hiszpan.config.json`. By default, output is formatted for human readability.
+
+<ParamField body="--json" type="flag">
+  Outputs the script list in JSON format, suitable for piping into other tools
+  or scripts.
+</ParamField>
+
+<ParamField body="--verbose" type="flag">
+  Includes each script's description (if defined) alongside its name in the
+  output.
+</ParamField>
+
+```bash
+# List all discovered scripts
+$ script list
+
+  build       → scripts/build.sh
+  deploy      → scripts/deploy.sh
+  lint        → scripts/lint.sh
+  test        → scripts/test.sh
+
+# List with descriptions
+$ script list --verbose
+
+  build       → scripts/build.sh       "Compile and bundle the project"
+  deploy      → scripts/deploy.sh      "Deploy to the configured environment"
+  lint        → scripts/lint.sh        "Run the linter across all source files"
+  test        → scripts/test.sh        "Execute the full test suite"
+
+# Machine-readable JSON output
+$ script list --json
+
+[
+  { "name": "build",  "path": "scripts/build.sh",  "description": "Compile and bundle the project" },
+  { "name": "deploy", "path": "scripts/deploy.sh", "description": "Deploy to the configured environment" },
+  { "name": "lint",   "path": "scripts/lint.sh",   "description": "Run the linter across all source files" },
+  { "name": "test",   "path": "scripts/test.sh",   "description": "Execute the full test suite" }
+]
+```
+
+---
+
+### `script run <name>`
+
+Runs the named script discovered in your project. Replace `<name>` with the script identifier shown by `script list`. The script executes in the shell defined by your config (or `HISZPAN_SHELL`).
+
+<ParamField body="--dry-run" type="flag">
+  Previews the command that would be executed without actually running it.
+  Useful for verifying flag interpolation and environment variable injection
+  before committing to a run.
+</ParamField>
+
+<ParamField body="--env KEY=VALUE" type="flag">
+  Injects an environment variable into the script's runtime. You can pass this
+  flag multiple times to supply several variables.
+</ParamField>
+
+<ParamField body="--verbose" type="flag">
+  Streams detailed execution output including the resolved script path, shell
+  invocation, and exit code.
+</ParamField>
+
+```bash
+# Run a script by name
+$ script run build
+
+▶ Running build...
+✔ Build completed in 4.2s
+
+# Preview the command without executing it
+$ script run deploy --dry-run
+
+[dry-run] Would execute: /bin/bash scripts/deploy.sh
+[dry-run] Environment: NODE_ENV=production
+
+# Inject environment variables at runtime
+$ script run deploy --env NODE_ENV=production --env REGION=us-east-1
+
+▶ Running deploy (NODE_ENV=production, REGION=us-east-1)...
+✔ Deployment completed in 12.8s
+
+# Run with verbose output
+$ script run test --verbose
+
+▶ Resolved script: scripts/test.sh
+▶ Shell: /bin/bash
+▶ Starting execution...
+  [stdout] Running 42 tests...
+  [stdout] All tests passed.
+✔ Exited with code 0
+```
+
+---
+
+### `script config`
+
+Views or modifies values in your `hiszpan.config.json`. Use the subcommands below to read individual keys, set new values, or reset the config entirely.
+
+**Subcommands**
+
+| Subcommand | Description |
+|---|---|
+| `get <key>` | Prints the current value of the specified config key. |
+| `set <key> <value>` | Sets the config key to the given value and saves the file. |
+| `reset` | Resets `hiszpan.config.json` to its default values. |
+
+```bash
+# Read a config value
+$ script config get scriptsDir
+
+scripts
+
+# Set a config value
+$ script config set scriptsDir automation/scripts
+
+✔ Config updated: scriptsDir = "automation/scripts"
+
+# Reset configuration to defaults
+$ script config reset
+
+⚠ This will overwrite all custom config values.
+Are you sure? (y/N): y
+✔ Config reset to defaults.
+```
+
+---
+
+### `script --version`
+
+Prints the currently installed version of Hiszpan Scripts and exits.
+
+```bash
+$ script --version
+
+hiszpan-scripts v2.4.1
+```
+
+---
+
+### `script --help`
+
+Prints the top-level help text listing all available commands and global flags, then exits. You can also append `--help` to any subcommand to see command-specific usage.
+
+```bash
+$ script --help
+
+Usage: script <command> [options]
+
+Commands:
+  init          Initialize a new Hiszpan Scripts project
+  list          List all discovered scripts
+  run <name>    Run a named script
+  config        View or set configuration values
+
+Global Options:
+  --version     Print the installed version
+  --verbose     Enable verbose output
+  --config      Path to a custom config file
+  --help        Show help
+
+Run `script <command> --help` for command-specific options.
+```
